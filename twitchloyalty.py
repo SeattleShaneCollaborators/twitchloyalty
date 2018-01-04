@@ -24,7 +24,7 @@ class getCur():
 
 def createTables():
 	with getCur() as cur:
-		cur.execute("CREATE TABLE IF NOT EXISTS CurrentViewers(Username TEXT PRIMARY KEY, Lastview DATEIME;")
+		cur.execute("CREATE TABLE IF NOT EXISTS CurrentViewers(Username TEXT PRIMARY KEY;")
 		cur.execute("CREATE TABLE IF NOT EXISTS Viewers(Username TEXT PRIMARY KEY, ViewCount INTEGER, Lastview DATETIME;")
 
 def currentViewers(viewers):
@@ -38,7 +38,7 @@ def incrementViewer(viewer):
 	with getCur() as cur:
 		cur.execute("SELECT EXISTS(SELECT * FROM Viewers  WHERE Username = ?)",(viewer,))
 		if cur.fetchone()[0] == 0:
-			cur.execute("INSERT INTO Viewers VALUES (?,1);",(viewer,))
+  			cur.execute("INSERT INTO Viewers VALUES (?,1,DATETIME('now'));",(viewer,))
 			cur.execute("UPDATE Viewers SET Lastview = DATETIME('now') WHERE Username = ?;",(viewer,))
 		else:
 			cur.execute("UPDATE Viewers SET ViewCount = ViewCount + 1 WHERE Username = ?;",(viewer,))
