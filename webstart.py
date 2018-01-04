@@ -26,7 +26,7 @@ app = Flask(__name__)
 def getLeaderboard():
 	leaderboard = []
 	with getCur() as cur:
-		cur.execute("SELECT Username, ViewCount FROM Viewers ORDER BY ViewCount DESC LIMIT 100")
+		cur.execute("SELECT Username, ViewCount, LastView FROM Viewers ORDER BY ViewCount DESC LIMIT 100")
 		leaderboard = cur.fetchall()
 	return render_template('index.html',leaderboard=leaderboard)
 
