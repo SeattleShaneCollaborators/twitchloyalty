@@ -1,81 +1,63 @@
-
+#!/usr/bin/env python3
 import requests
 import json
 import sqlite3
+
 import settings
+import db
 
-# This sets up the SQLite and creates a cursor which creates, edits and stores values
-class getCur():
-	con = None
-	cur = None
-	def __enter__(self):
-		self.con = sqlite3.connect(settings.DBFILE)
-		self.cur = self.con.cursor()
-		self.cur.execute("PRAGMA foreign_keys = 1;")
-		return self.cur
-	def __exit__(self, type, value, traceback):
-		if self.cur and self.con and not value:
-			self.cur.close()
-			self.con.commit()
-			self.con.close()
-		return False
+def updateCurrentViewers(viewers):
+	with db.getCur() as cur:
+		cur.executemany("INSERT OR IGNORE INTO CurrentViewers VALUES(?);",list(zip(viewers)))
 
-#This creates the SQLite Table
-
-def createTables():
-	with getCur() as cur:
-		cur.execute("CREATE TABLE IF NOT EXISTS CurrentViewers(Username TEXT PRIMARY KEY;")
-		cur.execute("CREATE TABLE IF NOT EXISTS Viewers(Username TEXT PRIMARY KEY, ViewCount INTEGER, Lastview DATETIME;")
-
-def updatecurrentViewers(viewers):
-	with getCur() as cur:
+def clearCurrentViewers():
+	with db.getCur() as cur:
 		cur.execute("DELETE FROM CurrentViewers;")
-		for viewer in viewers:
-			cur.execute("INSERT INTO CurrentViewers VALUES(?);",(viewer,))
-
 
 def incrementViewer(viewer):
-	with getCur() as cur:
-		cur.execute("SELECT EXISTS(SELECT * FROM Viewers  WHERE Username = ?)",(viewer,))
-		if cur.fetchone()[0] == 0:
-  			cur.execute("INSERT INTO Viewers VALUES (?,1,DATETIME('now'));",(viewer,))
-			cur.execute("UPDATE Viewers SET Lastview = DATETIME('now') WHERE Username = ?;",(viewer,))
-		else:
-			cur.execute("UPDATE Viewers SET ViewCount = ViewCount + 1 WHERE Username = ?;",(viewer,))
+	with db.getCur() as cur:
+		    cur.execute("INSERT OR REPLACE INTO Viewers VALUES (?,COALESCE((SELECT ViewCount + 1 FROM Viewers WHERE Username = ?), 1),DATETIME('now'));",(viewer,viewer))
 
-#Boolean that returns True if veiewer has viewed this session
-def currentlyViewing(viewer):
-	with getCur() as cur:
-		cur.execute("SELECT EXISTS(SELECT * FROM CurrentViewers WHERE Username = ?)",(viewer,))
-		return cur.fetchone()[0] == 1
+def updateViewerTimes(viewers):
+	with db.getCur() as cur:
+		    cur.executemany("UPDATE Viewers SET Lastview = DATETIME('now') WHERE Username = ?;",list(zip(viewers)))
 
+#Returns the list of viewers from the current session
+def getCurrentViewers():
+	with db.getCur() as cur:
+		cur.execute("SELECT * FROM CurrentViewers")
+		return [viewer[0] for viewer in cur.fetchall()]
 
-def getViewers():
+def getChatters():
 	print('Beginning file download with requests')
 	url ='https://tmi.twitch.tv/group/user/' + settings.TWITCHCHANNEL + '/chatters'
-	r = requests.get(url)
 	try:
-		tmp = json.loads(r.content.decode('ascii'))
-		except ValueError:
-			print('Could not get twitch JSON, check TWITCHANNEL')
-		return tmp["chatters"]["viewers"]
+		r = requests.get(url)
+		tmp = json.loads(r.content.decode('utf-8'))
+		return tmp["chatters"]
+	except (ValueError, TypeError):
+		raise StandardError('Could not get twitch JSON, check TWITCHANNEL')
+
+def getViewers(chatters):
+	return chatters["viewers"]
+
+def isLive(chatters):
+	return settings.TWITCHCHANNEL in chatters["moderators"]
 
 # This goes through the CURRENT viewers and compares them against the table of viewers
 def incrementViewers():
-	viewers = getViewers()
-	with getCur() as cur:
-		for viewer in viewers:
-			if not currentlyViewing(viewer):
-				incrementViewer(viewer)
-	currentViewers(viewers)
+	chatters = getChatters()
+	viewers = getViewers(chatters)
+	if isLive(chatters):
+	    currentViewers = getCurrentViewers()
+	    for viewer in viewers:
+		    if viewer not in currentViewers:
+			    incrementViewer(viewer)
+	    updateViewerTimes(viewers)
+	    updateCurrentViewers(viewers)
+	else:
+	    clearCurrentViewers()
 
 if __name__ == "__main__":
-	createTables()
+	db.createTables()
 	incrementViewers()
-
-
-
-
-
-
-
