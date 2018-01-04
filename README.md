@@ -19,8 +19,11 @@ https://dev.twitch.tv/docs/api/reference
 	print('Checking to see if session is active')
 	url ='https://api.twitch.tv/helix/streams?' + settings.USERID
 	r = requests.get(url)
-	tmp = json.loads(r.content.decode('ascii'))
+	try:
+		tmp = json.loads(r.content.decode('ascii'))
 	return tmp["data"]["type"]
+	except ValueError:
+		print('Cannot get session state, check AUTH token or USERID')
   
  def isLive():
   if getLive == "live":
