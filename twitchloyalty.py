@@ -27,7 +27,7 @@ def createTables():
 		cur.execute("CREATE TABLE IF NOT EXISTS CurrentViewers(Username TEXT PRIMARY KEY;")
 		cur.execute("CREATE TABLE IF NOT EXISTS Viewers(Username TEXT PRIMARY KEY, ViewCount INTEGER, Lastview DATETIME;")
 
-def currentViewers(viewers):
+def updatecurrentViewers(viewers):
 	with getCur() as cur:
 		cur.execute("DELETE FROM CurrentViewers;")
 		for viewer in viewers:
@@ -54,8 +54,11 @@ def getViewers():
 	print('Beginning file download with requests')
 	url ='https://tmi.twitch.tv/group/user/' + settings.TWITCHCHANNEL + '/chatters'
 	r = requests.get(url)
-	tmp = json.loads(r.content.decode('ascii'))
-	return tmp["chatters"]["viewers"]
+	try:
+		tmp = json.loads(r.content.decode('ascii'))
+		except ValueError:
+			print('Could not get twitch JSON, check TWITCHANNEL')
+		return tmp["chatters"]["viewers"]
 
 # This goes through the CURRENT viewers and compares them against the table of viewers
 def incrementViewers():
