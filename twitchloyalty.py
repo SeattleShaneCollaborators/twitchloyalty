@@ -24,8 +24,8 @@ class getCur():
 
 def createTables():
 	with getCur() as cur:
-		cur.execute("CREATE TABLE IF NOT EXISTS CurrentViewers(Username TEXT PRIMARY KEY);")
-		cur.execute("CREATE TABLE IF NOT EXISTS Viewers(Username TEXT PRIMARY KEY, ViewCount INTEGER);")
+		cur.execute("CREATE TABLE IF NOT EXISTS CurrentViewers(Username TEXT PRIMARY KEY, Lastview DATETIME('now');")
+		cur.execute("CREATE TABLE IF NOT EXISTS Viewers(Username TEXT PRIMARY KEY, ViewCount INTEGER, Lastview DATETIME('now'));")
 
 def currentViewers(viewers):
 	with getCur() as cur:
