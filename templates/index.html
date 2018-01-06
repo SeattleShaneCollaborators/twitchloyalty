@@ -17,7 +17,11 @@
 <tbody>
 {% for viewer in leaderboard %}
 	<tr>
-		<td>{{viewer[0]}}</td>
+		{% if viewer[0] in currentviewers %}
+			<td>{{viewer[0]}} &#x1f441;</td>
+		{% else %}
+			<td>{{viewer[0]}}</td>
+		{% endif %} 
 		<td>{{viewer[1]}}</td>
 		<td>{{viewer[2]}}</td>
 	</tr>

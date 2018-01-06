@@ -13,7 +13,9 @@ def getLeaderboard():
 	with db.getCur() as cur:
 		cur.execute("SELECT Username, ViewCount, LastView FROM Viewers ORDER BY ViewCount DESC LIMIT ?", (settings.LEADERLENGTH,))
 		leaderboard = cur.fetchall()
-	return render_template('index.html',leaderboard=leaderboard, TWITCHCHANNEL=settings.TWITCHCHANNEL)
+		cur.execute("SELECT Username FROM CurrentViewers")
+		currentviewers = [viewer[0] for viewer in cur.fetchall()]
+	return render_template('index.html',leaderboard=leaderboard, TWITCHCHANNEL=settings.TWITCHCHANNEL, currentviewers=currentviewers)
 
 if __name__=='__main__':
 	db.createTables()
