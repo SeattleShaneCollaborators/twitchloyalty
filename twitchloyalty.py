@@ -6,6 +6,7 @@ from datetime import datetime
 import settings
 import db
 
+
 def updateCurrentViewers(viewers):
         with db.getCur() as cur:
                 cur.executemany("INSERT OR IGNORE INTO CurrentViewers VALUES(?);",list(zip(viewers)))
@@ -18,7 +19,7 @@ def clearCurrentViewers():
 
 def incrementViewer(viewer):
         with db.getCur() as cur:
-                    cur.execute("INSERT OR REPLACE INTO Viewers VALUES (?,COALESCE((SELECT ViewCount + 1 FROM Viewers WHERE Username = ?), 1),DATETIME('now'$
+                    cur.execute("INSERT OR REPLACE INTO Viewers VALUES (?,COALESCE((SELECT ViewCount + 1 FROM Viewers WHERE Username = ?), 1),DATETIME('now'));",(viewer,viewer))
         with open(settings.LOG, 'a') as logfile:
                 logfile.write(str(datetime.now()) + "   Incremeted Viewers" + '\n')
 
@@ -26,6 +27,17 @@ def incrementViewer(viewer):
 def updateViewerTimes(viewers):
         with db.getCur() as cur:
                     cur.executemany("UPDATE Viewers SET Lastview = DATETIME('now') WHERE Username = ?;",list(zip(viewers)))
+
+def isChannelLive():
+	print('Beginning file download live status from twitch' + settings.TWITCHCHANNEL)
+	url = 'https://api.twitch.tv/helix/streams?user_login=' + settings.TWITCHCHANNEL
+	header = {'Client-ID': settings.CLIENT_ID}
+	r = requests.get(url, headers=header)
+	tmp = json.loads(r.content.decode('utf-8'))
+	if len(tmp['data']) != 0:
+		return tmp['data'][0]['type'] == "live"
+	else: 
+		return False
 
 #Returns the list of viewers from the current session
 def getCurrentViewers():
@@ -40,8 +52,8 @@ def getChatters():
                 r = requests.get(url)
                 tmp = json.loads(r.content.decode('utf-8'))
                 return tmp["chatters"]
-        except (ValueError, TypeError):
-                raise StandardError('Could not get twitch JSON, check TWITCHANNEL')
+        except (ValueError, TypeError, KeyError):
+                raise RuntimeError('Could not get twitch JSON, check TWITCHANNEL')
 
 def getViewers(chatters):
         return chatters["viewers"]
@@ -53,7 +65,7 @@ def isLive(chatters):
 def incrementViewers():
         chatters = getChatters()
         viewers = getViewers(chatters)
-        if isLive(chatters):
+        if isChannelLive():
             currentViewers = getCurrentViewers()
             for viewer in viewers:
                     if viewer not in currentViewers:
