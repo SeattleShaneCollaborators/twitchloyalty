@@ -5,28 +5,46 @@
 <link rel="stylesheet" href="/static/style.css">
 <title>{{ TWITCHCHANNEL }} Viewer Interaction</title>
 </head>
+
 <body>
-<table class="table table-dark, table table-sm">
-<thead>
-  <tr>
-    <th scope="col">Viewer</th>
-    <th scope="col">View Count</th>
-		<th scope="col">Last Login</th>
-  </tr>
-</thead>
-<tbody>
-{% for viewer in leaderboard %}
-	<tr>
-		{% if viewer[0] in currentviewers %}
-			<td>{{viewer[0]}} &#x1f441;</td>
-		{% else %}
-			<td>{{viewer[0]}}</td>
-		{% endif %} 
-		<td>{{viewer[1]}}</td>
-		<td>{{viewer[2]}}</td>
-	</tr>
-{% endfor %}
-</tbody>
-</table>
+	<div class="row">
+		<div class="col-md-6 left">
+			<table class="table table-sm">
+			<thead>
+				<tr>
+					<th scope="col">Viewer</th>
+					<th scope="col">View Count</th>
+					<th scope="col">Last Login</th>
+				</tr>
+			</thead>
+			<tbody>
+			{% for viewer in leaderboard %}
+				<tr>
+					{% if viewer[0] in currentviewers %}
+						<td>{{viewer[0]}} &#x1f441;</td>
+					{% else %}
+						<td>{{viewer[0]}}</td>
+					{% endif %} 
+					<td>{{viewer[1]}}</td>
+					<td>{{viewer[2]}}</td>
+				</tr>
+			{% endfor %}
+			</tbody>
+			</table>
+		</div>
+
+		<div class="col-md-6 right">
+			<form action="/Dashboard" method="POST">
+				<label for="gametype">Custom Game Mode</label>
+				<input type="text"
+					id="gametype"
+					value="" placeholder="Custom game mode" name="gametype"> 
+				<input type="submit" value="updatemode" class="btn">
+			</form>
+			<div class="text-for-obs">
+				{{gamemode}}
+			</div>			
+		</div>
+	</div>
 </body>
 </html>

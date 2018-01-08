@@ -5,7 +5,11 @@ import os
 import db
 import settings
 from functools import wraps
+
+GAMEMODETEXT = "gamemodetext.txt"
+
 # This sets up flask to work properly
+ 
 app = Flask(__name__)
 @app.route("/", methods=["GET"])
 def home():
@@ -18,13 +22,31 @@ def home():
 			leaderboard = cur.fetchall()
 			cur.execute("SELECT Username FROM CurrentViewers")
 			currentviewers = [viewer[0] for viewer in cur.fetchall()]
-		return render_template('dashboard.html',leaderboard=leaderboard, TWITCHCHANNEL=settings.TWITCHCHANNEL, currentviewers=currentviewers)
+			if os.path.isfile(GAMEMODETEXT):
+				gamemode = open(GAMEMODETEXT).read()
+			else: 
+				gamemode = ""
+		return render_template('dashboard.html',leaderboard=leaderboard, TWITCHCHANNEL=settings.TWITCHCHANNEL, currentviewers=currentviewers, gamemode=gamemode)
+
+@app.route('/obs')
+def obs():
+	if os.path.isfile(GAMEMODETEXT):
+		gamemode = open(GAMEMODETEXT).read()
+	else: 
+		gamemode = ""
+	return gamemode
 
 @app.route('/', methods=["POST"])
 def do_admin_login():
 	if request.form['password'] == settings.PASSWORD and request.form['username'].lower() == settings.USERACCOUNT.lower():
 		session['logged_in'] = True
 	return home()
+
+@app.route('/Dashboard', methods=["POST"])
+def storeGamemode():
+	with open(GAMEMODETEXT, 'w+') as tmp:
+		tmp.write(str(request.form["gametype"]))
+	return redirect('/')
 
 app.secret_key = settings.SECRETKEY
 
