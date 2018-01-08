@@ -34,7 +34,7 @@ def obs():
 		gamemode = open(GAMEMODETEXT).read()
 	else: 
 		gamemode = ""
-	return gamemode
+	return render_template('obs.html', gamemode=gamemode)
 
 @app.route('/', methods=["POST"])
 def do_admin_login():
