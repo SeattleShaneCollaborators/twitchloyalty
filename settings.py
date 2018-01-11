@@ -11,5 +11,9 @@ BOT_NAME = "callisterbot"
 BOT_PASSWORD = "oauth:w5va3nqs71ldlm2f76308umxm1fftx"
 IRC_RATE = (20/30)
 WEATHER_API = "d08c100599545fa4edf6887fb6f629e6"
-
+DISCORD_BOT_AUTH = "NDAwNzgzMDYyNzAwMzkyNDQ4.DTiQCg.EsG7hAiN9xj9XWnzkCj7xV6-0qA"
+DISCORD_BOT_NAME = "callister-bot#7127"
+DISCORD_USER_ID = "400783062700392448"
+DISCORD_BOT_TOKEN = "NDAwNzgzMDYyNzAwMzkyNDQ4.DTiQCg.EsG7hAiN9xj9XWnzkCj7xV6-0qA"
+DISCORD_ADMIN_LIST = ['SCalaska#3042','Imfatmatt','BabaJuice', 'RobertLovesGames']
 
