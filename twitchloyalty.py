@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python3
 import requests
 import json
@@ -29,8 +30,8 @@ def updateViewerTimes(viewers):
                     cur.executemany("UPDATE Viewers SET Lastview = DATETIME('now') WHERE Username = ?;",list(zip(viewers)))
 
 def isChannelLive():
-	print('Beginning file download live status from twitch' + settings.TWITCHCHANNEL)
-	url = 'https://api.twitch.tv/helix/streams?user_login=' + settings.TWITCHCHANNEL
+	print('Beginning file download live status from twitch' + settings.TWITCH_CHANNEL)
+	url = 'https://api.twitch.tv/helix/streams?user_login=' + settings.TWITCH_CHANNEL
 	header = {'Client-ID': settings.CLIENT_ID}
 	r = requests.get(url, headers=header)
 	tmp = json.loads(r.content.decode('utf-8'))
@@ -46,8 +47,8 @@ def getCurrentViewers():
                 return [viewer[0] for viewer in cur.fetchall()]
 
 def getChatters():
-        print('Beginning file download from tmi.twitch.tv/' + settings.TWITCHCHANNEL)
-        url ='https://tmi.twitch.tv/group/user/' + settings.TWITCHCHANNEL + '/chatters'
+        print('Beginning file download from tmi.twitch.tv/' + settings.TWITCH_CHANNEL)
+        url ='https://tmi.twitch.tv/group/user/' + settings.TWITCH_CHANNEL + '/chatters'
         try:
                 r = requests.get(url)
                 tmp = json.loads(r.content.decode('utf-8'))
@@ -59,7 +60,7 @@ def getViewers(chatters):
         return chatters["viewers"]
 
 def isLive(chatters):
-        return settings.TWITCHCHANNEL in chatters["moderators"]
+        return settings.TWITCH_CHANNEL in chatters["moderators"]
 
 # This goes through the CURRENT viewers and compares them against the table of viewers
 def incrementViewers():

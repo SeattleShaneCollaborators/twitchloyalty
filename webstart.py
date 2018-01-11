@@ -26,7 +26,7 @@ def home():
 				gamemode = open(GAMEMODETEXT).read()
 			else: 
 				gamemode = ""
-		return render_template('dashboard.html',leaderboard=leaderboard, TWITCHCHANNEL=settings.TWITCHCHANNEL, currentviewers=currentviewers, gamemode=gamemode)
+		return render_template('dashboard.html',leaderboard=leaderboard, TWITCH_CHANNEL=settings.TWITCH_CHANNEL, currentviewers=currentviewers, gamemode=gamemode)
 
 @app.route('/obs')
 def obs():
@@ -38,7 +38,7 @@ def obs():
 
 @app.route('/', methods=["POST"])
 def do_admin_login():
-	if request.form['password'] == settings.PASSWORD and request.form['username'].lower() == settings.USERACCOUNT.lower():
+	if request.form['password'] == settings.PASSWORD and request.form['username'].lower() == settings.USER_ACCOUNT.lower():
 		session['logged_in'] = True
 	return home()
 
@@ -52,6 +52,6 @@ app.secret_key = settings.SECRETKEY
 
 if __name__=='__main__':
 	db.createTables()
-	app.run(host='0.0.0.0', port=8000)
+	app.run(host='0.0.0.0', port=80)
 
 
