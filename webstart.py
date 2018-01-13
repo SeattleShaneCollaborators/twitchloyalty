@@ -6,10 +6,7 @@ import db
 import settings
 from functools import wraps
 
-GAMEMODETEXT = "gamemodetext.txt"
-
 # This sets up flask to work properly
- 
 app = Flask(__name__)
 @app.route("/", methods=["GET"])
 def home():
@@ -24,8 +21,10 @@ def home():
 			currentviewers = [viewer[0] for viewer in cur.fetchall()]
 			if os.path.isfile(GAMEMODETEXT):
 				gamemode = open(GAMEMODETEXT).read()
-			else: 
+			else:
 				gamemode = ""
+			cur.execute("Select
+
 		return render_template('dashboard.html',leaderboard=leaderboard, TWITCH_CHANNEL=settings.TWITCH_CHANNEL, currentviewers=currentviewers, gamemode=gamemode)
 
 @app.route('/obs')
