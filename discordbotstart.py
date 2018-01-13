@@ -6,6 +6,9 @@ import os
 import random
 import settings
 import twitchbot
+import db
+import irc
+
 
 client = discord.Client()
 
@@ -20,25 +23,26 @@ async def on_ready():
 	
 @client.event
 async def on_message(message):
-	password = ""
 	
 	if message.content.startswith('-setpass') and str(message.author) in settings.DISCORD_ADMIN_LIST:
 		print('message content: ' + message.content)
 		password = message.content.split('-setpass ')[1]
-		r = open('temppass.txt', 'w')
-		r.write(password)
+		with db.getCur() as cur:
+			cur.execute("CREATE or  INTO Data TEMPPASSWORD(?);",(password))
 		print(str(message.author) + " has set a new password via discord to " + "(" + password + ")")
 		await client.send_message(message.channel,str(message.author) + " has set a new password via discord to " + password)
 		await client.send_message(message.channel,"Sending password to subscriberss in 1 minute")
 		await asyncio.sleep(5)
-		await client.send_message(subscribers,"The password for the next game is: " + password)
-		await client.send_message(subscribers,"Sending password to twitch chat in 2 minutes")
+		await client.send_message(settings.DISCORD_CH_SUBSCRIBERS,"The password for the next game is: " + password)
+		await client.send_message(settings.DISCORD_CH_SUBSCRIBERS,"Sending password to twitch chat in 2 minutes")
 		await client.send_message(message.channel,"Sending password to twitch chat in 2 minutes")
 		await asynco.sleep(5)
-		await twitchbot(irc.sendmsg("The password for the custom server is: " + password))
+		await irc.sendmsg("The password for the custom server is: " + password))
 	
 	if message.content.startswith('-pass') and str(message.author) in settings.DISCORD_ADMIN_LIST:
 		await client.send_message(message.channel,"The password for the next game is: " + password)
+	
+	
 	
 	elif message.content != 0:
 		print(message.content)
