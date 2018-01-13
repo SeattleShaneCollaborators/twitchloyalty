@@ -11,9 +11,7 @@ import json
 
 def twitchbot():
 	irc.connect()
-	channel = settings.TWITCH_CHANNEL
-	server = settings.IRC_HOST
-	nickname = settings.BOT_NAME
+
 	while 1:
 		text = irc.get_text()
 		username = text[1:text.find('!')]
@@ -50,9 +48,10 @@ def twitchbot():
 		
 		#Lets twitch users see the password
 		if  "PRIVMSG" in text and "-pass" in text:
-		with db.getCur() as cur:
-		cur.execute("SELECT " Data TEMPPASSWORD(?);",(password))
-		
+			with db.getCur() as cur:
+				cur.execute("SELECT * FROM PUBGPasswords")
+				print("The password is: " + str(cur.fetchone()[0]))
+				irc.sendmsg("The password is: " + str(cur.fetchone()[0]))
 		
 		
 if __name__ == "__main__":

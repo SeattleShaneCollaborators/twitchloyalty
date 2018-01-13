@@ -21,4 +21,6 @@ class getCur():
 def createTables():
 	with getCur() as cur:
 		cur.execute("CREATE TABLE IF NOT EXISTS CurrentViewers(Username TEXT PRIMARY KEY);")
-		cur.execute("CREATE TABLE IF NOT EXISTS Viewers(Username TEXT PRIMARY KEY, ViewCount INTEGER, Lastview DATETIME);")
+		cur.execute("CREATE TABLE IF NOT EXISTS Viewers(Username TEXT PRIMARY KEY, ViewCount INTEGER, Lastview DATETIME, DiscordUsername TEXT);")
+		cur.execute("CREATE TABLE IF NOT EXISTS PUBGPasswords(Password TEXT PRIMARY KEY);")
+		cur.execute("CREATE TABLE IF NOT EXISTS GameModes(Gamemode TEXT PRIMARY KEY);")
