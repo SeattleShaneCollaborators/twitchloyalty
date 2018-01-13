@@ -43,7 +43,7 @@ async def setpass(message):
 		cur.execute("DELETE FROM PUBGPasswords")
 		cur.execute("INSERT INTO PUBGPasswords VALUES(?);",(password,))
 	print(str(message.author) + " has set a new password via discord to " + "(" + password + ")")
-	await client.send_message(message.channel,str(message.author) + " has set a new password via discord to " + password)
+	await client.send_message(message.channel,str(message.author.name) + " has set a new password via discord to " + password)
 	await client.send_message(message.channel,"Sending password to subscriberss in 1 minute")
 	await asyncio.sleep(60)
 	subscriberchannel = discord.Object(id=settings.DISCORD_CH_SUBSCRIBERS)
@@ -54,7 +54,7 @@ async def setpass(message):
 	await irc.sendmsg("The password for the custom server is: " + password)
 		
 async def sendpass(message):
-	if password is == "":
+	if password == "":
 		await client.send_message(message.channel,"No password has been set")
 	else:
 		await client.send_message(message.channel,"The password for the next game is: " + password)

@@ -9,6 +9,7 @@ from functools import wraps
 # This sets up flask to work properly
 app = Flask(__name__)
 @app.route("/", methods=["GET"])
+gamemode = ""
 def home():
 	if not session.get('logged_in'):
 		return render_template('login.html')
@@ -19,18 +20,18 @@ def home():
 			leaderboard = cur.fetchall()
 			cur.execute("SELECT Username FROM CurrentViewers")
 			currentviewers = [viewer[0] for viewer in cur.fetchall()]
-			if os.path.isfile(GAMEMODETEXT):
-				gamemode = open(GAMEMODETEXT).read()
+			if cur.execute("SELECT * FROM Gamemodes;"[0]:
+				gamemodes = cur.fetchone()
 			else:
 				gamemode = ""
-			cur.execute("Select
-
+			
+			
 		return render_template('dashboard.html',leaderboard=leaderboard, TWITCH_CHANNEL=settings.TWITCH_CHANNEL, currentviewers=currentviewers, gamemode=gamemode)
 
 @app.route('/obs')
 def obs():
-	if os.path.isfile(GAMEMODETEXT):
-		gamemode = open(GAMEMODETEXT).read()
+	if cur.execute("SELECT * FROM Gamemodes;"[0]:
+		gamemode = cur.fetchone()
 	else: 
 		gamemode = ""
 	return render_template('obs.html', gamemode=gamemode)
@@ -41,9 +42,10 @@ def do_admin_login():
 		session['logged_in'] = True
 	return home()
 
+#Needs fixing for refactor
 @app.route('/Dashboard', methods=["POST"])
 def storeGamemode():
-	with open(GAMEMODETEXT, 'w+') as tmp:
+	cur.execute("INSERT INTO PUBGPasswords VALUES(?);",(ganemode,))
 		tmp.write(str(request.form["gametype"]))
 	return redirect('/')
 
