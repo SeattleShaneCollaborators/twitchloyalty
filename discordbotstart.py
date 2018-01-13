@@ -6,6 +6,8 @@ import os
 import random
 import settings
 import twitchbot
+import irc
+
 
 client = discord.Client()
 
@@ -15,9 +17,7 @@ async def on_ready():
 	print(client.user.name)
 	print(client.user.id)
 	print('-----')
-	print("Channels bot can see: " + str(list(client.get_all_channels())))
-	
-	
+
 @client.event
 async def on_message(message):
 	password = ""
@@ -29,21 +29,30 @@ async def on_message(message):
 		r.write(password)
 		print(str(message.author) + " has set a new password via discord to " + "(" + password + ")")
 		await client.send_message(message.channel,str(message.author) + " has set a new password via discord to " + password)
-		await client.send_message(message.channel,"Sending password to subscriberss in 1 minute")
-		await asyncio.sleep(5)
-		await client.send_message(subscribers,"The password for the next game is: " + password)
-		await client.send_message(subscribers,"Sending password to twitch chat in 2 minutes")
+		await client.send_message(message.channel,"Sending password to Channel subs in 1 minute")
+		await asyncio.sleep(60)
+		await client.send_message(397507255840407552,"The password for the next game is: " + password)
+		await client.send_message(397507255840407552,"Sending password to twitch chat in 2 minutes")
 		await client.send_message(message.channel,"Sending password to twitch chat in 2 minutes")
 		await asynco.sleep(5)
-		await twitchbot(irc.sendmsg("The password for the custom server is: " + password))
+		await irc.sendmsg("The password for the custom server is: " + password)
 	
 	if message.content.startswith('-pass') and str(message.author) in settings.DISCORD_ADMIN_LIST:
 		await client.send_message(message.channel,"The password for the next game is: " + password)
 	
-	elif message.content != 0:
+	elif message.content.find("Hello") and message.content.find("Callisterbot"):
 		print(message.content)
 		print(message.author)
 		print(message.channel)
 
-		
+	elif message.content.startswith('!test'):
+		await client.send_message(message.channel,"I live!")
+
+	elif message.content != 0:
+		print(message.content)
+		print("from: " + message.author)
+		print("in channel: " + message.channel)
+
+
+
 client.run(settings.DISCORD_BOT_TOKEN)
