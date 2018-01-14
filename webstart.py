@@ -23,7 +23,7 @@ def home():
 			if cur.execute("SELECT * FROM Gamemodes;")[0]:
 				gamemode = cur.fetchone()
 			else:
-				gamemode = ""			
+				gamemode = ""
 		return render_template('dashboard.html',leaderboard=leaderboard, TWITCH_CHANNEL=settings.TWITCH_CHANNEL, currentviewers=currentviewers, gamemode=gamemode)
 
 @app.route('/obs')
