@@ -20,8 +20,8 @@ def home():
 			leaderboard = cur.fetchall()
 			cur.execute("SELECT Username FROM CurrentViewers")
 			currentviewers = [viewer[0] for viewer in cur.fetchall()]
-			if cur.execute("SELECT * FROM Gamemodes;"[0]:
-				gamemodes = cur.fetchone()
+			if cur.execute("SELECT * FROM Gamemodes;")[0]:
+				gamemode = cur.fetchone()
 			else:
 				gamemode = ""
 			
@@ -30,7 +30,7 @@ def home():
 
 @app.route('/obs')
 def obs():
-	if cur.execute("SELECT * FROM Gamemodes;"[0]:
+	if cur.execute("SELECT * FROM Gamemodes;")[0]:
 		gamemode = cur.fetchone()
 	else: 
 		gamemode = ""
@@ -46,7 +46,7 @@ def do_admin_login():
 @app.route('/Dashboard', methods=["POST"])
 def storeGamemode():
 	cur.execute("INSERT INTO PUBGPasswords VALUES(?);",(ganemode,))
-		tmp.write(str(request.form["gametype"]))
+		gamemode = cur.fetchone
 	return redirect('/')
 
 app.secret_key = settings.SECRETKEY
