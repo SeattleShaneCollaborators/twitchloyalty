@@ -23,9 +23,7 @@ def home():
 			if cur.execute("SELECT * FROM Gamemodes;")[0]:
 				gamemode = cur.fetchone()
 			else:
-				gamemode = ""
-			
-			
+				gamemode = ""			
 		return render_template('dashboard.html',leaderboard=leaderboard, TWITCH_CHANNEL=settings.TWITCH_CHANNEL, currentviewers=currentviewers, gamemode=gamemode)
 
 @app.route('/obs')
@@ -34,7 +32,7 @@ def obs():
 		gamemode = cur.fetchone()
 	else: 
 		gamemode = ""
-	return render_template('obs.html', gamemode=gamemode)
+	return render_template('obs.html', gamemode=gamemode,)
 
 @app.route('/', methods=["POST"])
 def do_admin_login():
@@ -45,8 +43,10 @@ def do_admin_login():
 #Needs fixing for refactor
 @app.route('/Dashboard', methods=["POST"])
 def storeGamemode():
-	cur.execute("INSERT INTO PUBGPasswords VALUES(?);",(ganemode,))
-		gamemode = cur.fetchone
+	gamemode = request.form('gamemode')
+	if gamemode is not "":
+		cur.execute("INSERT INTO PUBGPasswords VALUES(?);",(gamemode,))
+		gamemode = cur.fetchone()
 	return redirect('/')
 
 app.secret_key = settings.SECRETKEY
@@ -54,5 +54,4 @@ app.secret_key = settings.SECRETKEY
 if __name__=='__main__':
 	db.createTables()
 	app.run(host='0.0.0.0', port=80)
-
 
