@@ -9,7 +9,6 @@ from functools import wraps
 # This sets up flask to work properly
 app = Flask(__name__)
 @app.route("/", methods=["GET"])
-gamemode = ""
 def home():
 	if not session.get('logged_in'):
 		return render_template('login.html')
