@@ -47,9 +47,11 @@ def do_admin_login():
 #Needs fixing for refactor
 @app.route('/Dashboard', methods=["POST"])
 def storeGamemode():
-	gamemode = request.form('gamemode')
+	gamemode = request.form['gamemode']
 	if gamemode is not "":
-		cur.execute("INSERT INTO PUBGPasswords VALUES(?);",(gamemode,))
+		with db.getCur() as cur:
+			cur.execute("DELETE FROM GameModes;")
+			cur.execute("INSERT INTO GameModes VALUES(?);",(gamemode,))
 	return redirect('/')
 
 app.secret_key = settings.SECRETKEY
