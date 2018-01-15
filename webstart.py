@@ -19,18 +19,24 @@ def home():
 			leaderboard = cur.fetchall()
 			cur.execute("SELECT Username FROM CurrentViewers")
 			currentviewers = [viewer[0] for viewer in cur.fetchall()]
-			if cur.execute("SELECT * FROM GameModes;"):
-				gamemode = cur.fetchone()[0]
-			else:
+			cur.execute("SELECT * FROM GameModes;")
+			gamemode = cur.fetchone()			
+			if gamemode is None:
 				gamemode = ""			
+			else:
+				gamemode = gamemode[0]
 		return render_template('dashboard.html',leaderboard=leaderboard, TWITCH_CHANNEL=settings.TWITCH_CHANNEL, currentviewers=currentviewers, gamemode=gamemode)
 
 @app.route('/obs')
 def obs():
 	with db.getCur() as cur:
 		cur.execute("SELECT * FROM GameModes;")
-		gamemode = cur.fetchone()[0]
-	return render_template('obs.html', gamemode=gamemode,)
+		gamemode = cur.fetchone()			
+		if gamemode is None:
+			gamemode = ""			
+		else:
+			gamemode = gamemode[0]
+	return render_template('obs.html', gamemode=gamemode)
 
 @app.route('/', methods=["POST"])
 def do_admin_login():
