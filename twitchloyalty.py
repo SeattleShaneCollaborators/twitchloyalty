@@ -20,7 +20,7 @@ def clearCurrentViewers():
 
 def incrementViewer(viewer):
         with db.getCur() as cur:
-                    cur.execute("INSERT OR REPLACE INTO Viewers VALUES (?,COALESCE((SELECT ViewCount + 1 FROM Viewers WHERE Username = ?), 1),DATETIME('now'));",(viewer,viewer))
+                    cur.execute("INSERT OR REPLACE INTO Viewers (Username,ViewCount,Lastview) VALUES (?,COALESCE((SELECT ViewCount + 1 FROM Viewers WHERE Username = ?), 1),DATETIME('now'));",(viewer,viewer))
         with open(settings.LOG, 'a') as logfile:
                 logfile.write(str(datetime.now()) + "   Incremeted Viewers" + '\n')
 
@@ -32,7 +32,9 @@ def updateViewerTimes(viewers):
 def isChannelLive():
 	print('Beginning file download live status from twitch' + settings.TWITCH_CHANNEL)
 	url = 'https://api.twitch.tv/helix/streams?user_login=' + settings.TWITCH_CHANNEL
+	print(url)
 	header = {'Client-ID': settings.CLIENT_ID}
+	print(header)
 	r = requests.get(url, headers=header)
 	tmp = json.loads(r.content.decode('utf-8'))
 	if len(tmp['data']) != 0:
